@@ -1,0 +1,16 @@
+langchain
+langchain_community
+langchain-openai
+langchain-groq
+python-dotenv
+openai
+tavily-python
+beautifulsoup4
+requests
+lxml
+streamlit
+aiohttp
+pandas
+tiktoken
+rich
+
