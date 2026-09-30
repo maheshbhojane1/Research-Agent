@@ -5,7 +5,7 @@ import streamlit as st
 from tools import web_search, scrape
 from agent import writer_chain, critic_chain
 
-# ── Page config ──────────────────────────────────────────────────────────────
+# Page config
 st.set_page_config(
     page_title="ResearchMind · AI Research Agent",
     page_icon="🔬",
@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Custom CSS ────────────────────────────────────────────────────────────────
+# CSS 
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
@@ -31,11 +31,11 @@ html, body, [class*="css"] {
         radial-gradient(ellipse 60% 40% at 80% 110%, rgba(255,80,30,0.08) 0%, transparent 55%);
 }
 
-/* ── Hide default streamlit chrome ── */
+
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding: 2rem 3rem 4rem; max-width: 1200px; }
 
-/* ── Hero header ── */
+
 .hero {
     text-align: center;
     padding: 3.5rem 0 2.5rem;
@@ -72,14 +72,14 @@ html, body, [class*="css"] {
     line-height: 1.65;
 }
 
-/* ── Divider ── */
+
 .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,140,50,0.3), transparent);
     margin: 2rem 0;
 }
 
-/* ── Input card ── */
+
 .input-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,140,50,0.15);
@@ -89,7 +89,6 @@ html, body, [class*="css"] {
     backdrop-filter: blur(8px);
 }
 
-/* ── Streamlit input overrides ── */
 .stTextInput > div > div > input {
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(255,140,50,0.25) !important;
@@ -113,7 +112,6 @@ html, body, [class*="css"] {
     font-weight: 500 !important;
 }
 
-/* ── Button ── */
 .stButton > button {
     background: linear-gradient(135deg, #ff8c32 0%, #ff5a1a 100%) !important;
     color: #0a0a0f !important;
@@ -138,7 +136,7 @@ html, body, [class*="css"] {
     transform: translateY(0) !important;
 }
 
-/* ── Pipeline step cards ── */
+
 .step-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.07);
@@ -199,7 +197,7 @@ html, body, [class*="css"] {
 .status-running  { color: #ff8c32; }
 .status-done     { color: #50c878; }
 
-/* ── Result panels ── */
+
 .result-panel {
     background: rgba(255,255,255,0.025);
     border: 1px solid rgba(255,255,255,0.07);
@@ -227,7 +225,7 @@ html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
 }
 
-/* ── Report & feedback panels ── */
+
 .report-panel {
     background: rgba(255,255,255,0.025);
     border: 1px solid rgba(255,140,50,0.2);
@@ -259,10 +257,10 @@ html, body, [class*="css"] {
     border-bottom: 1px solid rgba(80,200,120,0.15);
 }
 
-/* ── Progress text ── */
+
 .stSpinner > div { color: #ff8c32 !important; }
 
-/* ── Expander ── */
+
 details summary {
     font-family: 'DM Mono', monospace !important;
     font-size: 0.75rem !important;
@@ -271,7 +269,7 @@ details summary {
     cursor: pointer;
 }
 
-/* ── Section heading ── */
+
 .section-heading {
     font-family: 'Syne', sans-serif;
     font-size: 1.3rem;
@@ -280,7 +278,7 @@ details summary {
     margin: 2rem 0 1rem;
 }
 
-/* ── Toast-style notice ── */
+
 .notice {
     font-family: 'DM Mono', monospace;
     font-size: 0.72rem;
@@ -293,7 +291,7 @@ details summary {
 """, unsafe_allow_html=True)
 
 
-# ── Helper: render a step card (into any container / placeholder) ────────────
+# Helper: render a step card (into any container / placeholder)
 def step_card(num: str, title: str, state: str, desc: str = "", target=st):
     status_map = {
         "waiting": ("WAITING", "status-waiting"),
@@ -318,12 +316,12 @@ def step_card(num: str, title: str, state: str, desc: str = "", target=st):
     """, unsafe_allow_html=True)
 
 
-# ── Session state init ────────────────────────────────────────────────────────
+# Session state init 
 if "results" not in st.session_state:
     st.session_state.results = {}
 
 
-# ── Hero ──────────────────────────────────────────────────────────────────────
+# Hero 
 st.markdown("""
 <div class="hero">
     <div class="hero-eyebrow">Multi-Step AI Research System</div>
@@ -337,7 +335,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Layout: input left, pipeline right ───────────────────────────────────────
+# Layout: input left, pipeline right 
 col_input, col_spacer, col_pipeline = st.columns([5, 0.5, 4])
 
 with col_input:
@@ -385,7 +383,7 @@ def render_steps(states: dict):
 render_steps({k: "done" for k in st.session_state.results})
 
 
-# ── Run pipeline ──────────────────────────────────────────────────────────────
+# Run pipeline
 if run_btn:
     if not topic.strip():
         st.warning("Please enter a research topic first.")
@@ -434,7 +432,7 @@ if run_btn:
         st.session_state.results = results
 
 
-# ── Results display ───────────────────────────────────────────────────────────
+# Results display
 r = st.session_state.results
 
 if r:
@@ -478,7 +476,7 @@ if r:
         st.markdown(r["critic"])
 
 
-# ── Footer ────────────────────────────────────────────────────────────────────
+
 st.markdown("""
 <div class="notice">
     ResearchMind · LangChain + Groq + Tavily · Built with Streamlit
