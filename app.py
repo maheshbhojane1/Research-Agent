@@ -43,11 +43,11 @@ html, body, [class*="css"] {
 }
 .hero-eyebrow {
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 500;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: #ff8c32;
+    color: #fff;
     margin-bottom: 1rem;
     opacity: 0.9;
 }
@@ -63,37 +63,19 @@ html, body, [class*="css"] {
 .hero h1 span {
     color: #ff8c32;
 }
-.hero-sub {
-    font-size: 1.05rem;
-    font-weight: 300;
-    color: #a09890;
-    max-width: 520px;
-    margin: 0 auto;
-    line-height: 1.65;
-}
-
 
 .divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,140,50,0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,140,50,1.5), transparent);
     margin: 2rem 0;
 }
 
-
-.input-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,140,50,0.15);
-    border-radius: 16px;
-    padding: 2rem 2.5rem;
-    margin-bottom: 2rem;
-    backdrop-filter: blur(8px);
-}
 
 .stTextInput > div > div > input {
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(255,140,50,0.25) !important;
     border-radius: 10px !important;
-    color: #f0ebe0 !important;
+    color: #000 !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 1rem !important;
     padding: 0.75rem 1rem !important;
@@ -280,9 +262,9 @@ details summary {
 
 
 .notice {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Syne', monospace;
     font-size: 0.72rem;
-    color: #605850;
+    color: #ff8c32;
     text-align: center;
     margin-top: 3rem;
     letter-spacing: 0.08em;
@@ -291,7 +273,7 @@ details summary {
 """, unsafe_allow_html=True)
 
 
-# Helper: render a step card (into any container / placeholder)
+
 def step_card(num: str, title: str, state: str, desc: str = "", target=st):
     status_map = {
         "waiting": ("WAITING", "status-waiting"),
@@ -325,11 +307,7 @@ if "results" not in st.session_state:
 st.markdown("""
 <div class="hero">
     <div class="hero-eyebrow">Multi-Step AI Research System</div>
-    <h1>Research<span>Mind</span></h1>
-    <p class="hero-sub">
-        Search, scrape, write and critique — an automated pipeline that
-        delivers a polished research report on any topic.
-    </p>
+    <h1>Research<span style="color:#fff;">Mind</span></h1>
 </div>
 <div class="divider"></div>
 """, unsafe_allow_html=True)
@@ -339,17 +317,17 @@ st.markdown("""
 col_input, col_spacer, col_pipeline = st.columns([5, 0.5, 4])
 
 with col_input:
-    st.markdown('<div class="input-card">', unsafe_allow_html=True)
+    
     topic = st.text_input(
         "Research Topic",
         placeholder="e.g. Quantum computing breakthroughs in 2026",
         key="topic_input",
         label_visibility="visible",
     )
-    run_btn = st.button("⚡  Run Research Pipeline", use_container_width=True)
+    run_btn = st.button("Run Research Pipeline", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Example chips (display only)
+    
     chips = "".join(
         f'<span style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);'
         f'border-radius:6px;padding:0.25rem 0.7rem;font-size:0.75rem;color:#a09890;">{ex}</span>'
@@ -357,7 +335,6 @@ with col_input:
     )
     st.markdown(
         f'<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">'
-        f'<span style="font-family:DM Mono,monospace;font-size:0.68rem;color:#605850;">TRY →</span>'
         f'{chips}</div>',
         unsafe_allow_html=True,
     )
@@ -379,11 +356,11 @@ def render_steps(states: dict):
         step_card(num, title, states.get(key, "waiting"), desc, target=slots[key])
 
 
-# Initial render: show "done" for anything already completed
+
 render_steps({k: "done" for k in st.session_state.results})
 
 
-# Run pipeline
+
 if run_btn:
     if not topic.strip():
         st.warning("Please enter a research topic first.")
@@ -396,12 +373,12 @@ if run_btn:
 
         render_steps({})
         try:
-            # 1. Search (direct tool call, no flaky agent)
+            
             update("search", "running")
             results["search"] = web_search.invoke({"query": topic})
             update("search", "done")
 
-            # 2. Read: try result URLs in order until one scrapes cleanly
+            
             update("reader", "running")
             results["reader"] = "No page could be scraped; rely on search snippets."
             for url in re.findall(r"URL: (\S+)", results["search"]):
@@ -411,7 +388,7 @@ if run_btn:
                     break
             update("reader", "done")
 
-            # 3. Write
+            
             update("writer", "running")
             results["writer"] = writer_chain.invoke({
                 "topic": topic,
@@ -422,7 +399,7 @@ if run_btn:
             })
             update("writer", "done")
 
-            # 4. Critic
+            
             update("critic", "running")
             results["critic"] = critic_chain.invoke({"report": results["writer"]})
             update("critic", "done")
@@ -432,14 +409,14 @@ if run_btn:
         st.session_state.results = results
 
 
-# Results display
+
 r = st.session_state.results
 
 if r:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-heading">Results</div>', unsafe_allow_html=True)
 
-    # Raw outputs in expanders (escaped so scraped HTML can't break the layout)
+    
     if "search" in r:
         with st.expander("🔍 Search Results (raw)", expanded=False):
             st.markdown(
@@ -456,7 +433,7 @@ if r:
                 unsafe_allow_html=True,
             )
 
-    # Final report
+    
     if "writer" in r:
         st.markdown('<div class="panel-label orange">📝 Final Research Report</div>',
                     unsafe_allow_html=True)
@@ -469,7 +446,7 @@ if r:
             mime="text/markdown",
         )
 
-    # Critic feedback
+    
     if "critic" in r:
         st.markdown('<div class="panel-label green">🧐 Critic Feedback</div>',
                     unsafe_allow_html=True)
@@ -479,6 +456,6 @@ if r:
 
 st.markdown("""
 <div class="notice">
-    ResearchMind · LangChain + Groq + Tavily · Built with Streamlit
+    Research<span style="color:#fff;">Mind</span>
 </div>
 """, unsafe_allow_html=True)
