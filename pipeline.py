@@ -8,12 +8,12 @@ SEP = "\n" + "== " * 20 + "\n"
 def run_research_pipeline(topic: str) -> dict:
     state = {}
 
-    # Step 1 - Search (direct tool call, no agent)
+    # Step 1
     print(SEP + "Step 1 - Searching ....")
     state["search_result"] = web_search.invoke({"query": topic})
     print("\nsearch result\n", state["search_result"])
 
-    # Step 2 - Read: try the result URLs in order until one scrapes cleanly
+    # Step 2 
     print(SEP + "Step 2 - Reading ....")
     urls = re.findall(r"URL: (\S+)", state["search_result"])
     state["scraped_content"] = ""
@@ -26,7 +26,7 @@ def run_research_pipeline(topic: str) -> dict:
         state["scraped_content"] = "No page could be scraped; rely on search snippets."
     print("\nscraped content (preview)\n", state["scraped_content"][:500])
 
-    # Step 3 - Write
+    # Step 3 
     print(SEP + "Step 3 - Writing ....")
     research = (
         f"SEARCH RESULTS:\n{state['search_result'][:2500]}\n\n"
@@ -35,7 +35,7 @@ def run_research_pipeline(topic: str) -> dict:
     state["report"] = writer_chain.invoke({"topic": topic, "research": research})
     print("\nFinal Report\n", state["report"])
 
-    # Step 4 - Critic
+    # Step 4 
     print(SEP + "Step 4 - Critic ....")
     state["feedback"] = critic_chain.invoke({"report": state["report"]})
     print("\ncritic report\n", state["feedback"])
