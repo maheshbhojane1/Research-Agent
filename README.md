@@ -2,8 +2,7 @@
 
 ResearchMind takes any topic and produces a sourced research report in under a minute. It searches the live web, scrapes the most relevant page, writes a structured report with an LLM, then has a second LLM pass review and score the result. It has a Streamlit web UI and can also run from the command line.
 
-**Live demo:** _add your Streamlit link here_
-**Demo video / screenshots:** _add here_
+**Live demo:** https://research--mind.streamlit.app/
 
 ---
 
